@@ -50,6 +50,16 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody Usuario usuarioAtualizado) {
+        try {
+            Usuario usuario = usuarioService.atualizar(id, usuarioAtualizado);
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException erro) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluir(@PathVariable Long id) {
         if (usuarioService.buscarPorId(id).isEmpty()) {

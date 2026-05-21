@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Arquivos do Windows/OneDrive
+desktop.ini
+**/desktop.ini
+Thumbs.db
+ehthumbs.db
+.DS_Store

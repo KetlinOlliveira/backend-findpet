@@ -49,6 +49,21 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
+    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findById(id);
+
+        if (usuarioExistente.isEmpty()) {
+            throw new RuntimeException("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioExistente.get();
+        usuario.setNome(usuarioAtualizado.getNome());
+        usuario.setEmail(usuarioAtualizado.getEmail());
+        usuario.setSenha(usuarioAtualizado.getSenha());
+
+        return usuarioRepository.save(usuario);
+    }
+
     public void excluir(Long id) {
         usuarioRepository.deleteById(id);
     }
