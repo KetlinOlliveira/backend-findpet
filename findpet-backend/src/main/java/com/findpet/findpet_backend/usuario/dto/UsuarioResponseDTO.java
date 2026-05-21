@@ -2,6 +2,11 @@ package com.findpet.findpet_backend.usuario.dto;
 
 import lombok.Data;
 
+
+/*
+ * DTO usado para retornar os dados públicos do usuário.
+ * A senha não é incluída para evitar exposição de dados sensíveis.
+ */
 @Data
 public class UsuarioResponseDTO {
 

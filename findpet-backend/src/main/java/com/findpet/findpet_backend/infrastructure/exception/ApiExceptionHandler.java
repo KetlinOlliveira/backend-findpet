@@ -10,9 +10,17 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
+/*
+ * Classe responsável por capturar e tratar exceções da API.
+ * Centraliza as respostas de erro para evitar try/catch repetido nos controllers.
+ */
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    /*
+ * Trata exceções de regra de negócio lançadas pelos services.
+ */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponseDTO> handleBusinessException(
             BusinessException exception,
@@ -28,6 +36,9 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
+ /*
+     * Trata erros de validação gerados por campos inválidos nos DTOs.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationException(
             MethodArgumentNotValidException exception,
@@ -53,6 +64,11 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
+        /*
+     * Trata erros relacionados à integridade dos dados no banco.
+     * Exemplo: tentativa de cadastrar dados duplicados.
+     */
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(
             DataIntegrityViolationException exception,
@@ -67,6 +83,10 @@ public class ApiExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
+
+    /*
+     * Trata qualquer erro inesperado não capturado pelos outros métodos.
+     */
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<com.findpet.findpet_backend.infrastructure.dto.ErrorResponseDTO> handleGenericException(

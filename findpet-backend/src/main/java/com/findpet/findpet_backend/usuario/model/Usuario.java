@@ -5,14 +5,25 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+/*
+ * Entidade que representa a tabela de usuários no banco de dados.
+ * Cada objeto desta classe será persistido como um registro na tabela usuarios.
+ */
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
 
+    /*
+    * Identificador único do usuário.
+    * O valor é gerado automaticamente pelo banco de dados.
+    */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
+    * Dados básicos do usuário utilizados para cadastro e autenticação.
+    */
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 

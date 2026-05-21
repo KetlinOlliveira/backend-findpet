@@ -11,11 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/*
+ * Controller responsável por expor os endpoints REST de usuário.
+ * Recebe as requisições HTTP e direciona as operações para o service.
+ */
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
+    /*
+    * Service com as regras de negócio e utilitário para converter entidades em DTOs.
+    */
     private final UsuarioService usuarioService;
     private final ObjectMapperUtil objectMapperUtil;
 
@@ -27,6 +34,11 @@ public class UsuarioController {
         this.objectMapperUtil = objectMapperUtil;
     }
 
+
+    /*
+ * Endpoint para cadastrar um novo usuário.
+ * Recebe um DTO de entrada e retorna um DTO de resposta sem expor a senha.
+ */
     @PostMapping("/cadastro")
     public ResponseEntity<UsuarioResponseDTO> cadastrar(
             @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
@@ -43,6 +55,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+
+/*
+ * Endpoint para autenticar o usuário.
+ * Recebe email e senha e retorna os dados públicos do usuário autenticado.
+ */
     @PostMapping("/login")
     public ResponseEntity<UsuarioResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO loginRequestDTO
@@ -59,7 +76,10 @@ public class UsuarioController {
 
         return ResponseEntity.ok(responseDTO);
     }
-
+/*
+ * Endpoint para listar todos os usuários cadastrados.
+ * Retorna uma lista de DTOs sem informações sensíveis.
+ */
     @GetMapping
     public ResponseEntity<?> listarTodos() {
         return ResponseEntity.ok(
@@ -70,6 +90,9 @@ public class UsuarioController {
         );
     }
 
+/*
+ * Endpoint para buscar um usuário específico pelo ID.
+ */
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         Usuario usuario = usuarioService.buscarPorId(id);
@@ -82,6 +105,9 @@ public class UsuarioController {
         return ResponseEntity.ok(responseDTO);
     }
 
+/*
+ * Endpoint para atualizar os dados de um usuário existente.
+ */
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizar(
             @PathVariable Long id,
@@ -102,6 +128,9 @@ public class UsuarioController {
         return ResponseEntity.ok(responseDTO);
     }
 
+/*
+ * Endpoint para excluir um usuário pelo ID.
+ */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         usuarioService.excluir(id);

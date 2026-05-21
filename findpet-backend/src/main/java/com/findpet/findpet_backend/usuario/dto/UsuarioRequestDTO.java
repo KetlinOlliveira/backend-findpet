@@ -4,9 +4,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/*
+ * DTO usado para receber os dados de cadastro e atualização de usuário.
+ * Não possui ID, pois o identificador é gerado automaticamente pelo banco.
+ */
 @Data
 public class UsuarioRequestDTO {
 
+    /*
+ * Validações aplicadas aos dados recebidos na requisição.
+ */
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
