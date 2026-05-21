@@ -1,7 +1,8 @@
-package com.findpet.findpet_backend.repository;
+package com.findpet.findpet_backend.usuario.repository;
 
-import com.findpet.findpet_backend.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.findpet.findpet_backend.usuario.model.Usuario;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.findpet.findpet_backend.model;
+package com.findpet.findpet_backend.usuario.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
