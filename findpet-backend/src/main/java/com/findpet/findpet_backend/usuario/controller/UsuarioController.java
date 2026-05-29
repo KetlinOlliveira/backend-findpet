@@ -11,6 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+
 /*
  * Controller responsável por expor os endpoints REST de usuário.
  * Recebe as requisições HTTP e direciona as operações para o service.
@@ -76,19 +81,21 @@ public class UsuarioController {
 
         return ResponseEntity.ok(responseDTO);
     }
-/*
- * Endpoint para listar todos os usuários cadastrados.
- * Retorna uma lista de DTOs sem informações sensíveis.
+
+ /*
+ * Endpoint para listar usuários de forma paginada.
+ * Retorna uma página de DTOs sem informações sensíveis.
  */
-    @GetMapping
-    public ResponseEntity<?> listarTodos() {
-        return ResponseEntity.ok(
-                objectMapperUtil.mapAll(
-                        usuarioService.listarTodos(),
-                        UsuarioResponseDTO.class
-                )
-        );
-    }
+        @GetMapping
+        public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(
+                @PageableDefault(size = 10, sort = "nome", direction = Sort.Direction.ASC)
+                Pageable pageable
+        ) {
+        Page<UsuarioResponseDTO> usuarios = usuarioService.listarTodos(pageable)
+                .map(usuario -> objectMapperUtil.map(usuario, UsuarioResponseDTO.class));
+
+        return ResponseEntity.ok(usuarios);
+        }
 
 /*
  * Endpoint para buscar um usuário específico pelo ID.

@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 /*
@@ -59,11 +60,13 @@ public class UsuarioService {
     }
 
 
-    /*
-    * Retorna todos os usuários cadastrados no banco.
-    */
-    public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+   
+  /*
+ * Retorna os usuários cadastrados de forma paginada.
+ * O Pageable permite controlar página, quantidade de itens e ordenação.
+ */
+    public Page<Usuario> listarTodos(Pageable pageable) {
+        return usuarioRepository.findAll(pageable);
     }
 /*
  * Busca um usuário pelo ID.
