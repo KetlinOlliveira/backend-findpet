@@ -1,15 +1,16 @@
 package com.findpet.findpet_backend.infrastructure.exception;
 
 import com.findpet.findpet_backend.infrastructure.dto.ErrorResponseDTO;
+import com.findpet.findpet_backend.infrastructure.exception.FieldErrorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
 
 /*
  * Classe responsável por capturar e tratar exceções da API.
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ApiExceptionHandler {
 
     /*
- * Trata exceções de regra de negócio lançadas pelos services.
- */
+     * Trata exceções de regra de negócio lançadas pelos services.
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponseDTO> handleBusinessException(
             BusinessException exception,
@@ -36,39 +37,39 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
- /*
+    /*
      * Trata erros de validação gerados por campos inválidos nos DTOs.
+     * Retorna cada campo que falhou junto com a mensagem da validação.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationException(
             MethodArgumentNotValidException exception,
             HttpServletRequest request
     ) {
-        StringBuilder mensagem = new StringBuilder();
-
-        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            mensagem
-                    .append(fieldError.getField())
-                    .append(": ")
-                    .append(fieldError.getDefaultMessage())
-                    .append(" ");
-        }
+        List<FieldErrorDTO> campos = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> new FieldErrorDTO(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                ))
+                .toList();
 
         ErrorResponseDTO erro = new ErrorResponseDTO(
                 HttpStatus.BAD_REQUEST.value(),
                 "Erro de validação",
-                mensagem.toString().trim(),
-                request.getRequestURI()
+                "Existem campos inválidos na requisição.",
+                request.getRequestURI(),
+                campos
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
-        /*
+    /*
      * Trata erros relacionados à integridade dos dados no banco.
      * Exemplo: tentativa de cadastrar dados duplicados.
      */
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(
             DataIntegrityViolationException exception,
@@ -87,9 +88,8 @@ public class ApiExceptionHandler {
     /*
      * Trata qualquer erro inesperado não capturado pelos outros métodos.
      */
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<com.findpet.findpet_backend.infrastructure.dto.ErrorResponseDTO> handleGenericException(
+    public ResponseEntity<ErrorResponseDTO> handleGenericException(
             Exception exception,
             HttpServletRequest request
     ) {

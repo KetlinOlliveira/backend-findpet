@@ -3,6 +3,9 @@ package com.findpet.findpet_backend.usuario.service;
 import com.findpet.findpet_backend.infrastructure.exception.BusinessException;
 import com.findpet.findpet_backend.usuario.model.Usuario;
 import com.findpet.findpet_backend.usuario.repository.UsuarioRepository;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,14 +16,16 @@ import java.util.List;
  * Aqui ficam validações como email duplicado, login e atualização de cadastro.
  */
 @Service
+@Transactional(readOnly = true)
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
 
-    /*
+    /*  
     * Injeta o repository para permitir o acesso aos dados dos usuários.
     */
+  
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
@@ -30,6 +35,7 @@ public class UsuarioService {
     * Cadastra um novo usuário.
     * Antes de salvar, verifica se o email já está cadastrado.
     */
+     @Transactional
     public Usuario cadastrar(Usuario usuario) {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new BusinessException("Email já cadastrado.");
@@ -73,6 +79,7 @@ public class UsuarioService {
  * Atualiza os dados de um usuário existente.
  * Também impede que o email seja alterado para um email já usado por outro usuário.
  */
+    @Transactional
     public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
         Usuario usuario = buscarPorId(id);
 
@@ -95,6 +102,7 @@ public class UsuarioService {
  * Exclui um usuário pelo ID.
  * Antes de excluir, verifica se o usuário existe.
  */
+    @Transactional
     public void excluir(Long id) {
         Usuario usuario = buscarPorId(id);
 

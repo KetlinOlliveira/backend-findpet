@@ -2,6 +2,7 @@ package com.findpet.findpet_backend.usuario.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /*
@@ -15,6 +16,7 @@ public class UsuarioRequestDTO {
  * Validações aplicadas aos dados recebidos na requisição.
  */
     @NotBlank(message = "O nome é obrigatório.")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
     private String nome;
 
     @Email(message = "Digite um email válido.")
@@ -22,6 +24,7 @@ public class UsuarioRequestDTO {
     private String email;
 
     @NotBlank(message = "A senha é obrigatória.")
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
     private String senha;
     
 
