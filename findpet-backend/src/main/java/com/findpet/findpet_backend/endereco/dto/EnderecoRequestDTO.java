@@ -1,21 +1,10 @@
-package com.findpet.findpet_backend.endereco.model;
+package com.findpet.findpet_backend.endereco.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name = "enderecos")
-public class Endereco {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class EnderecoRequestDTO {
 
     @NotBlank(message = "O CEP é obrigatório.")
     private String cep;
@@ -31,5 +20,6 @@ public class Endereco {
     private String numero;
     private String complemento;
 
-     
-}
+    public EnderecoRequestDTO() {
+    }
+} 
