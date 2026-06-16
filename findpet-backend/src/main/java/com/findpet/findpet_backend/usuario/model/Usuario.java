@@ -1,14 +1,26 @@
 package com.findpet.findpet_backend.usuario.model;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.findpet.findpet_backend.perfil.model.Perfil;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * Entidade que representa a tabela de usuários no banco de dados.
  * Cada objeto desta classe será persistido como um registro na tabela usuarios.
  */
+
+@Data 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
@@ -36,45 +48,12 @@ public class Usuario {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
-    public Usuario() {
-    }
+    private Boolean ativo = true;
 
-    public Usuario(Long id, String nome, String email, String senha) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-    }
+    private LocalDateTime dataCriacao = LocalDateTime.now();
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "perfil_id")
+    private Perfil perfil;
 
-    public String getNome() {
-        return nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
 }

@@ -40,33 +40,33 @@ public class UsuarioController {
     }
 
 
-    /*
- * Endpoint para cadastrar um novo usuário.
- * Recebe um DTO de entrada e retorna um DTO de resposta sem expor a senha.
- */
-    @PostMapping("/cadastro")
-    public ResponseEntity<UsuarioResponseDTO> cadastrar(
+        /*
+        * Endpoint para cadastrar um novo usuário.
+        * Recebe um DTO de entrada e retorna um DTO de resposta sem expor a senha.
+        */
+        @PostMapping("/cadastro")
+        public ResponseEntity<UsuarioResponseDTO> cadastrar(
             @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
-    ) {
+         ) {
         Usuario usuario = objectMapperUtil.map(usuarioRequestDTO, Usuario.class);
 
-        Usuario usuarioSalvo = usuarioService.cadastrar(usuario);
-
-        UsuarioResponseDTO responseDTO = objectMapperUtil.map(
-                usuarioSalvo,
-                UsuarioResponseDTO.class
+        Usuario usuarioSalvo = usuarioService.cadastrar(
+        usuario,
+        usuarioRequestDTO.getPerfilId()
         );
+
+        UsuarioResponseDTO responseDTO = converterParaResponse(usuarioSalvo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
 
-/*
- * Endpoint para autenticar o usuário.
- * Recebe email e senha e retorna os dados públicos do usuário autenticado.
- */
-    @PostMapping("/login")
-    public ResponseEntity<UsuarioResponseDTO> login(
+        /*
+        * Endpoint para autenticar o usuário.
+        * Recebe email e senha e retorna os dados públicos do usuário autenticado.
+        */
+        @PostMapping("/login")
+        public ResponseEntity<UsuarioResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO loginRequestDTO
     ) {
         Usuario usuario = usuarioService.login(
@@ -74,49 +74,44 @@ public class UsuarioController {
                 loginRequestDTO.getSenha()
         );
 
-        UsuarioResponseDTO responseDTO = objectMapperUtil.map(
-                usuario,
-                UsuarioResponseDTO.class
-        );
+        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
 
         return ResponseEntity.ok(responseDTO);
     }
 
- /*
- * Endpoint para listar usuários de forma paginada.
- * Retorna uma página de DTOs sem informações sensíveis.
- */
+        /*
+        * Endpoint para listar usuários de forma paginada.
+        * Retorna uma página de DTOs sem informações sensíveis.
+        */
         @GetMapping
         public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(
                 @PageableDefault(size = 10, sort = "nome", direction = Sort.Direction.ASC)
                 Pageable pageable
         ) {
-        Page<UsuarioResponseDTO> usuarios = usuarioService.listarTodos(pageable)
-                .map(usuario -> objectMapperUtil.map(usuario, UsuarioResponseDTO.class));
+       
+                Page<UsuarioResponseDTO> usuarios = usuarioService.listarTodos(pageable)
+        .map(this::converterParaResponse);
 
         return ResponseEntity.ok(usuarios);
         }
 
-/*
- * Endpoint para buscar um usuário específico pelo ID.
- */
-    @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioService.buscarPorId(id);
+        /*
+        * Endpoint para buscar um usuário específico pelo ID.
+        */
+        @GetMapping("/{id}")
+        public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
+                Usuario usuario = usuarioService.buscarPorId(id);
 
-        UsuarioResponseDTO responseDTO = objectMapperUtil.map(
-                usuario,
-                UsuarioResponseDTO.class
-        );
+        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
 
-        return ResponseEntity.ok(responseDTO);
-    }
+                return ResponseEntity.ok(responseDTO);
+        }
 
-/*
- * Endpoint para atualizar os dados de um usuário existente.
- */
-    @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> atualizar(
+        /*
+        * Endpoint para atualizar os dados de um usuário existente.
+        */
+        @PutMapping("/{id}")
+        public ResponseEntity<UsuarioResponseDTO> atualizar(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
     ) {
@@ -125,23 +120,43 @@ public class UsuarioController {
                 Usuario.class
         );
 
-        Usuario usuario = usuarioService.atualizar(id, usuarioAtualizado);
-
-        UsuarioResponseDTO responseDTO = objectMapperUtil.map(
-                usuario,
-                UsuarioResponseDTO.class
+        Usuario usuario = usuarioService.atualizar(
+        id,
+        usuarioAtualizado,
+        usuarioRequestDTO.getPerfilId()
         );
+
+        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
 
         return ResponseEntity.ok(responseDTO);
     }
 
-/*
- * Endpoint para excluir um usuário pelo ID.
- */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        usuarioService.excluir(id);
+        /*
+        * Endpoint para excluir um usuário pelo ID.
+        */
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> excluir(@PathVariable Long id) {
+                usuarioService.excluir(id);
 
-        return ResponseEntity.noContent().build();
-    }
+                return ResponseEntity.noContent().build();
+        }
+       
+
+        private UsuarioResponseDTO converterParaResponse(Usuario usuario) {
+        UsuarioResponseDTO responseDTO = new UsuarioResponseDTO();
+
+        responseDTO.setId(usuario.getId());
+        responseDTO.setNome(usuario.getNome());
+        responseDTO.setEmail(usuario.getEmail());
+        responseDTO.setAtivo(usuario.getAtivo());
+        responseDTO.setDataCriacao(usuario.getDataCriacao());
+
+        if (usuario.getPerfil() != null) {
+                responseDTO.setPerfilId(usuario.getPerfil().getId());
+                responseDTO.setPerfilNome(usuario.getPerfil().getNome());
+        }
+
+        return responseDTO;
+}
+
 }

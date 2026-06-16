@@ -26,6 +26,8 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "A senha é obrigatória.")
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres.")
     private String senha;
+
+    private Long perfilId;
     
 
     public UsuarioRequestDTO() {
@@ -35,6 +37,7 @@ public class UsuarioRequestDTO {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        this.perfilId = perfilId;
     }
 
 }
