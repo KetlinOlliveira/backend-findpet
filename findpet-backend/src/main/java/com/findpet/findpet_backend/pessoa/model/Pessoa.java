@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,19 +22,21 @@ public class Pessoa {
     private Long id;
 
     @NotBlank(message = "O CPF é obrigatório.")
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
     private String telefone;
 
     private LocalDate dataNascimento;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id", nullable = false, unique = true)
     private Endereco endereco;
 
+ 
+  
 }
