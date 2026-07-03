@@ -66,7 +66,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new BusinessException("Email não encontrado."));
 
         if (!usuario.getSenha().equals(senha)) {
-            throw new BusinessException("Senha incorreta.");
+            throw new BusinessException("Senha inválid.");
         }
 
         return usuario;

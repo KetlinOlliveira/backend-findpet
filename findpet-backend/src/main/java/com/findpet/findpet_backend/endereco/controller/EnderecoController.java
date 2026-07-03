@@ -30,6 +30,7 @@ public class EnderecoController {
         this.objectMapperUtil = objectMapperUtil;
     }
 
+    //Método http de POST para cadastrar endereço, recebendo um DTO de entrada e retornando um DTO de resposta.
     @PostMapping
     public ResponseEntity<EnderecoResponseDTO> cadastrar(
             @Valid @RequestBody EnderecoRequestDTO enderecoRequestDTO
@@ -46,6 +47,8 @@ public class EnderecoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+
+    //Medodo http de GET para listar todos os endereços, com paginação e ordenação.
     @GetMapping
     public ResponseEntity<Page<EnderecoResponseDTO>> listarTodos(
             @PageableDefault(size = 10, sort = "cidade", direction = Sort.Direction.ASC)
@@ -57,6 +60,7 @@ public class EnderecoController {
         return ResponseEntity.ok(enderecos);
     }
 
+    //Método http de GET para buscar um endereço por ID, retornando um DTO de resposta.
     @GetMapping("/{id}")
     public ResponseEntity<EnderecoResponseDTO> buscarPorId(@PathVariable Long id) {
         Endereco endereco = enderecoService.buscarPorId(id);
@@ -68,6 +72,9 @@ public class EnderecoController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
+
+    //Método http de PUT para atualizar um endereço, recebendo um DTO de entrada e retornando um DTO de resposta.
 
     @PutMapping("/{id}")
     public ResponseEntity<EnderecoResponseDTO> atualizar(
@@ -89,6 +96,7 @@ public class EnderecoController {
         return ResponseEntity.ok(responseDTO);
     }
 
+    //Método http de DELETE para excluir um endereço por ID.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         enderecoService.excluir(id);

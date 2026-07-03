@@ -1,8 +1,8 @@
 package com.findpet.findpet_backend.perfil.controller;
 
 import com.findpet.findpet_backend.infrastructure.mapper.ObjectMapperUtil;
-import com.findpet.findpet_backend.perfil.dto.request.PerfilRequestDTO;
-import com.findpet.findpet_backend.perfil.dto.response.PerfilResponseDTO;
+import com.findpet.findpet_backend.perfil.dto.PerfilRequestDTO;
+import com.findpet.findpet_backend.perfil.dto.PerfilResponseDTO;
 import com.findpet.findpet_backend.perfil.model.Perfil;
 import com.findpet.findpet_backend.perfil.service.PerfilService;
 import jakarta.validation.Valid;

@@ -46,19 +46,22 @@ public class UsuarioController {
         */
         @PostMapping("/cadastro")
         public ResponseEntity<UsuarioResponseDTO> cadastrar(
-            @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
-         ) {
-        Usuario usuario = objectMapperUtil.map(usuarioRequestDTO, Usuario.class);
+                @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
+        ) {
+        Usuario usuario = new Usuario();
+        usuario.setNome(usuarioRequestDTO.getNome());
+        usuario.setEmail(usuarioRequestDTO.getEmail());
+        usuario.setSenha(usuarioRequestDTO.getSenha());
 
         Usuario usuarioSalvo = usuarioService.cadastrar(
-        usuario,
-        usuarioRequestDTO.getPerfilId()
+                usuario,
+                usuarioRequestDTO.getPerfilId()
         );
 
         UsuarioResponseDTO responseDTO = converterParaResponse(usuarioSalvo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-    }
+        }
 
 
         /*
@@ -112,24 +115,24 @@ public class UsuarioController {
         */
         @PutMapping("/{id}")
         public ResponseEntity<UsuarioResponseDTO> atualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
-    ) {
-        Usuario usuarioAtualizado = objectMapperUtil.map(
-                usuarioRequestDTO,
-                Usuario.class
-        );
+                @PathVariable Long id,
+                @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
+        ) {
+        Usuario usuarioAtualizado = new Usuario();
+        usuarioAtualizado.setNome(usuarioRequestDTO.getNome());
+        usuarioAtualizado.setEmail(usuarioRequestDTO.getEmail());
+        usuarioAtualizado.setSenha(usuarioRequestDTO.getSenha());
 
         Usuario usuario = usuarioService.atualizar(
-        id,
-        usuarioAtualizado,
-        usuarioRequestDTO.getPerfilId()
+                id,
+                usuarioAtualizado,
+                usuarioRequestDTO.getPerfilId()
         );
 
         UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
 
         return ResponseEntity.ok(responseDTO);
-    }
+        }
 
         /*
         * Endpoint para excluir um usuário pelo ID.
