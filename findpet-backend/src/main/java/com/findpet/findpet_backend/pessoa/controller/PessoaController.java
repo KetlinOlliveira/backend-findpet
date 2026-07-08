@@ -28,7 +28,16 @@ public class PessoaController {
     public ResponseEntity<PessoaResponseDTO> cadastrar(
             @Valid @RequestBody PessoaRequestDTO pessoaRequestDTO
     ) {
-        Pessoa pessoa = pessoaService.cadastrar(pessoaRequestDTO);
+        Pessoa novaPessoa = new Pessoa();
+        novaPessoa.setCpf(pessoaRequestDTO.getCpf());
+        novaPessoa.setTelefone(pessoaRequestDTO.getTelefone());
+        novaPessoa.setDataNascimento(pessoaRequestDTO.getDataNascimento());
+
+        Pessoa pessoa = pessoaService.cadastrar(
+                novaPessoa,
+                pessoaRequestDTO.getUsuarioId(),
+                pessoaRequestDTO.getEnderecoId()
+        );
 
         PessoaResponseDTO responseDTO = converterParaResponse(pessoa);
 
@@ -60,7 +69,17 @@ public class PessoaController {
             @PathVariable Long id,
             @Valid @RequestBody PessoaRequestDTO pessoaRequestDTO
     ) {
-        Pessoa pessoa = pessoaService.atualizar(id, pessoaRequestDTO);
+        Pessoa pessoaAtualizada = new Pessoa();
+        pessoaAtualizada.setCpf(pessoaRequestDTO.getCpf());
+        pessoaAtualizada.setTelefone(pessoaRequestDTO.getTelefone());
+        pessoaAtualizada.setDataNascimento(pessoaRequestDTO.getDataNascimento());
+
+        Pessoa pessoa = pessoaService.atualizar(
+                id,
+                pessoaAtualizada,
+                pessoaRequestDTO.getUsuarioId(),
+                pessoaRequestDTO.getEnderecoId()
+        );
 
         PessoaResponseDTO responseDTO = converterParaResponse(pessoa);
 

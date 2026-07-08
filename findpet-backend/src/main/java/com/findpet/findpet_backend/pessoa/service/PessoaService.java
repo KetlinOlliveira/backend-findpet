@@ -3,7 +3,6 @@ package com.findpet.findpet_backend.pessoa.service;
 import com.findpet.findpet_backend.endereco.model.Endereco;
 import com.findpet.findpet_backend.endereco.repository.EnderecoRepository;
 import com.findpet.findpet_backend.infrastructure.exception.BusinessException;
-import com.findpet.findpet_backend.pessoa.dto.PessoaRequestDTO;
 import com.findpet.findpet_backend.pessoa.model.Pessoa;
 import com.findpet.findpet_backend.pessoa.repository.PessoaRepository;
 import com.findpet.findpet_backend.usuario.model.Usuario;
@@ -32,28 +31,24 @@ public class PessoaService {
     }
 
     @Transactional
-    public Pessoa cadastrar(PessoaRequestDTO pessoaRequestDTO) {
-        if (pessoaRepository.existsByCpf(pessoaRequestDTO.getCpf())) {
+    public Pessoa cadastrar(Pessoa pessoa, Long usuarioId, Long enderecoId) {
+        if (pessoaRepository.existsByCpf(pessoa.getCpf())) {
             throw new BusinessException("CPF já cadastrado.");
         }
 
-        pessoaRepository.findByUsuarioId(pessoaRequestDTO.getUsuarioId())
-                .ifPresent(pessoa -> {
+        pessoaRepository.findByUsuarioId(usuarioId)
+                .ifPresent(pessoaExistente -> {
                     throw new BusinessException("Este usuário já possui uma pessoa cadastrada.");
                 });
 
-        pessoaRepository.findByEnderecoId(pessoaRequestDTO.getEnderecoId())
-                .ifPresent(pessoa -> {
+        pessoaRepository.findByEnderecoId(enderecoId)
+                .ifPresent(pessoaExistente -> {
                     throw new BusinessException("Este endereço já está vinculado a uma pessoa.");
                 });
 
-        Usuario usuario = buscarUsuarioPorId(pessoaRequestDTO.getUsuarioId());
-        Endereco endereco = buscarEnderecoPorId(pessoaRequestDTO.getEnderecoId());
+        Usuario usuario = buscarUsuarioPorId(usuarioId);
+        Endereco endereco = buscarEnderecoPorId(enderecoId);
 
-        Pessoa pessoa = new Pessoa();
-        pessoa.setCpf(pessoaRequestDTO.getCpf());
-        pessoa.setTelefone(pessoaRequestDTO.getTelefone());
-        pessoa.setDataNascimento(pessoaRequestDTO.getDataNascimento());
         pessoa.setUsuario(usuario);
         pessoa.setEndereco(endereco);
 
@@ -70,36 +65,36 @@ public class PessoaService {
     }
 
     @Transactional
-    public Pessoa atualizar(Long id, PessoaRequestDTO pessoaRequestDTO) {
+    public Pessoa atualizar(Long id, Pessoa pessoaAtualizada, Long usuarioId, Long enderecoId) {
         Pessoa pessoa = buscarPorId(id);
 
-        pessoaRepository.findByCpf(pessoaRequestDTO.getCpf())
+        pessoaRepository.findByCpf(pessoaAtualizada.getCpf())
                 .ifPresent(pessoaComMesmoCpf -> {
                     if (!pessoaComMesmoCpf.getId().equals(id)) {
                         throw new BusinessException("Este CPF já está sendo usado por outra pessoa.");
                     }
                 });
 
-        pessoaRepository.findByUsuarioId(pessoaRequestDTO.getUsuarioId())
+        pessoaRepository.findByUsuarioId(usuarioId)
                 .ifPresent(pessoaComMesmoUsuario -> {
                     if (!pessoaComMesmoUsuario.getId().equals(id)) {
                         throw new BusinessException("Este usuário já possui outra pessoa cadastrada.");
                     }
                 });
 
-        pessoaRepository.findByEnderecoId(pessoaRequestDTO.getEnderecoId())
+        pessoaRepository.findByEnderecoId(enderecoId)
                 .ifPresent(pessoaComMesmoEndereco -> {
                     if (!pessoaComMesmoEndereco.getId().equals(id)) {
                         throw new BusinessException("Este endereço já está vinculado a outra pessoa.");
                     }
                 });
 
-        Usuario usuario = buscarUsuarioPorId(pessoaRequestDTO.getUsuarioId());
-        Endereco endereco = buscarEnderecoPorId(pessoaRequestDTO.getEnderecoId());
+        Usuario usuario = buscarUsuarioPorId(usuarioId);
+        Endereco endereco = buscarEnderecoPorId(enderecoId);
 
-        pessoa.setCpf(pessoaRequestDTO.getCpf());
-        pessoa.setTelefone(pessoaRequestDTO.getTelefone());
-        pessoa.setDataNascimento(pessoaRequestDTO.getDataNascimento());
+        pessoa.setCpf(pessoaAtualizada.getCpf());
+        pessoa.setTelefone(pessoaAtualizada.getTelefone());
+        pessoa.setDataNascimento(pessoaAtualizada.getDataNascimento());
         pessoa.setUsuario(usuario);
         pessoa.setEndereco(endereco);
 
