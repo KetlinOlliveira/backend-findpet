@@ -15,6 +15,9 @@ public class AnimalRequestDTO {
     @Min(value = 0, message = "A idade não pode ser negativa.")
     private Integer idade;
 
+    private String porte;
+
+    private String sexo;
 
     private String descricao;
 

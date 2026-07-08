@@ -29,6 +29,8 @@ public class AnimalController implements IAnimalController {
         Animal animal = new Animal();
         animal.setNome(animalRequestDTO.getNome());
         animal.setIdade(animalRequestDTO.getIdade());
+        animal.setPorte(animalRequestDTO.getPorte());
+        animal.setSexo(animalRequestDTO.getSexo());
         animal.setDescricao(animalRequestDTO.getDescricao());
         animal.setFotoUrl(animalRequestDTO.getFotoUrl());
 
@@ -63,6 +65,8 @@ public class AnimalController implements IAnimalController {
         Animal animalAtualizado = new Animal();
         animalAtualizado.setNome(animalRequestDTO.getNome());
         animalAtualizado.setIdade(animalRequestDTO.getIdade());
+        animalAtualizado.setPorte(animalRequestDTO.getPorte());
+        animalAtualizado.setSexo(animalRequestDTO.getSexo());
         animalAtualizado.setDescricao(animalRequestDTO.getDescricao());
         animalAtualizado.setFotoUrl(animalRequestDTO.getFotoUrl());
 
@@ -90,6 +94,8 @@ public class AnimalController implements IAnimalController {
         responseDTO.setId(animal.getId());
         responseDTO.setNome(animal.getNome());
         responseDTO.setIdade(animal.getIdade());
+        responseDTO.setPorte(animal.getPorte());
+        responseDTO.setSexo(animal.getSexo());
         responseDTO.setDescricao(animal.getDescricao());
         responseDTO.setStatus(animal.getStatus());
         responseDTO.setFotoUrl(animal.getFotoUrl());

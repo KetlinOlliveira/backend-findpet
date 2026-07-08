@@ -12,7 +12,9 @@ public class AnimalResponseDTO {
     private Long id;
     private String nome;
     private Integer idade;
-   
+    private String porte;
+    private String sexo;
+
     private String descricao;
     private StatusAnimal status;
     private String fotoUrl;

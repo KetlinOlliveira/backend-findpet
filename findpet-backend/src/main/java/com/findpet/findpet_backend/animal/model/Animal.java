@@ -29,6 +29,10 @@ public class Animal {
 
     private Integer idade;
 
+    private String porte;
+
+    private String sexo;
+
     private String descricao;
 
     @Enumerated(EnumType.STRING)

@@ -93,6 +93,8 @@ public class AnimalService {
 
         animal.setNome(animalAtualizado.getNome());
         animal.setIdade(animalAtualizado.getIdade());
+        animal.setPorte(animalAtualizado.getPorte());
+        animal.setSexo(animalAtualizado.getSexo());
         animal.setDescricao(animalAtualizado.getDescricao());
         animal.setFotoUrl(animalAtualizado.getFotoUrl());
         animal.setUsuario(usuario);
