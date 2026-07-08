@@ -4,19 +4,18 @@ import com.findpet.findpet_backend.pessoa.dto.PessoaRequestDTO;
 import com.findpet.findpet_backend.pessoa.dto.PessoaResponseDTO;
 import com.findpet.findpet_backend.pessoa.model.Pessoa;
 import com.findpet.findpet_backend.pessoa.service.PessoaService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/pessoas")
 @CrossOrigin(origins = "*")
-public class PessoaController {
+public class PessoaController implements IPessoaController {
 
     private final PessoaService pessoaService;
 
@@ -24,10 +23,8 @@ public class PessoaController {
         this.pessoaService = pessoaService;
     }
 
-    @PostMapping
-    public ResponseEntity<PessoaResponseDTO> cadastrar(
-            @Valid @RequestBody PessoaRequestDTO pessoaRequestDTO
-    ) {
+    @Override
+    public ResponseEntity<PessoaResponseDTO> cadastrar(PessoaRequestDTO pessoaRequestDTO) {
         Pessoa novaPessoa = new Pessoa();
         novaPessoa.setCpf(pessoaRequestDTO.getCpf());
         novaPessoa.setTelefone(pessoaRequestDTO.getTelefone());
@@ -39,36 +36,26 @@ public class PessoaController {
                 pessoaRequestDTO.getEnderecoId()
         );
 
-        PessoaResponseDTO responseDTO = converterParaResponse(pessoa);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(converterParaResponse(pessoa));
     }
 
-    @GetMapping
-    public ResponseEntity<Page<PessoaResponseDTO>> listarTodos(
-            @PageableDefault(size = 10, sort = "cpf", direction = Sort.Direction.ASC)
-            Pageable pageable
-    ) {
+    @Override
+    public ResponseEntity<Page<PessoaResponseDTO>> listarTodos(Pageable pageable) {
         Page<PessoaResponseDTO> pessoas = pessoaService.listarTodos(pageable)
                 .map(this::converterParaResponse);
 
         return ResponseEntity.ok(pessoas);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PessoaResponseDTO> buscarPorId(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<PessoaResponseDTO> buscarPorId(Long id) {
         Pessoa pessoa = pessoaService.buscarPorId(id);
 
-        PessoaResponseDTO responseDTO = converterParaResponse(pessoa);
-
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(converterParaResponse(pessoa));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PessoaResponseDTO> atualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody PessoaRequestDTO pessoaRequestDTO
-    ) {
+    @Override
+    public ResponseEntity<PessoaResponseDTO> atualizar(Long id, PessoaRequestDTO pessoaRequestDTO) {
         Pessoa pessoaAtualizada = new Pessoa();
         pessoaAtualizada.setCpf(pessoaRequestDTO.getCpf());
         pessoaAtualizada.setTelefone(pessoaRequestDTO.getTelefone());
@@ -81,13 +68,11 @@ public class PessoaController {
                 pessoaRequestDTO.getEnderecoId()
         );
 
-        PessoaResponseDTO responseDTO = converterParaResponse(pessoa);
-
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(converterParaResponse(pessoa));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<Void> excluir(Long id) {
         pessoaService.excluir(id);
 
         return ResponseEntity.noContent().build();

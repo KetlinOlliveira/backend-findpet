@@ -6,15 +6,13 @@ import com.findpet.findpet_backend.usuario.dto.UsuarioResponseDTO;
 import com.findpet.findpet_backend.infrastructure.mapper.ObjectMapperUtil;
 import com.findpet.findpet_backend.usuario.model.Usuario;
 import com.findpet.findpet_backend.usuario.service.UsuarioService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /*
  * Controller responsável por expor os endpoints REST de usuário.
@@ -23,7 +21,7 @@ import org.springframework.data.web.PageableDefault;
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
-public class UsuarioController {
+public class UsuarioController implements IUsuarioController {
 
     /*
     * Service com as regras de negócio e utilitário para converter entidades em DTOs.
@@ -39,15 +37,12 @@ public class UsuarioController {
         this.objectMapperUtil = objectMapperUtil;
     }
 
-
-        /*
-        * Endpoint para cadastrar um novo usuário.
-        * Recebe um DTO de entrada e retorna um DTO de resposta sem expor a senha.
-        */
-        @PostMapping("/cadastro")
-        public ResponseEntity<UsuarioResponseDTO> cadastrar(
-                @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
-        ) {
+    /*
+    * Cadastra um novo usuário.
+    * Recebe um DTO de entrada e retorna um DTO de resposta sem expor a senha.
+    */
+    @Override
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(UsuarioRequestDTO usuarioRequestDTO) {
         Usuario usuario = new Usuario();
         usuario.setNome(usuarioRequestDTO.getNome());
         usuario.setEmail(usuarioRequestDTO.getEmail());
@@ -58,66 +53,50 @@ public class UsuarioController {
                 usuarioRequestDTO.getPerfilId()
         );
 
-        UsuarioResponseDTO responseDTO = converterParaResponse(usuarioSalvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(converterParaResponse(usuarioSalvo));
+    }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-        }
-
-
-        /*
-        * Endpoint para autenticar o usuário.
-        * Recebe email e senha e retorna os dados públicos do usuário autenticado.
-        */
-        @PostMapping("/login")
-        public ResponseEntity<UsuarioResponseDTO> login(
-            @Valid @RequestBody LoginRequestDTO loginRequestDTO
-    ) {
+    /*
+    * Autentica o usuário.
+    * Recebe email e senha e retorna os dados públicos do usuário autenticado.
+    */
+    @Override
+    public ResponseEntity<UsuarioResponseDTO> login(LoginRequestDTO loginRequestDTO) {
         Usuario usuario = usuarioService.login(
                 loginRequestDTO.getEmail(),
                 loginRequestDTO.getSenha()
         );
 
-        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
-
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(converterParaResponse(usuario));
     }
 
-        /*
-        * Endpoint para listar usuários de forma paginada.
-        * Retorna uma página de DTOs sem informações sensíveis.
-        */
-        @GetMapping
-        public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(
-                @PageableDefault(size = 10, sort = "nome", direction = Sort.Direction.ASC)
-                Pageable pageable
-        ) {
-       
-                Page<UsuarioResponseDTO> usuarios = usuarioService.listarTodos(pageable)
-        .map(this::converterParaResponse);
+    /*
+    * Lista usuários de forma paginada.
+    * Retorna uma página de DTOs sem informações sensíveis.
+    */
+    @Override
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarTodos(Pageable pageable) {
+        Page<UsuarioResponseDTO> usuarios = usuarioService.listarTodos(pageable)
+                .map(this::converterParaResponse);
 
         return ResponseEntity.ok(usuarios);
-        }
+    }
 
-        /*
-        * Endpoint para buscar um usuário específico pelo ID.
-        */
-        @GetMapping("/{id}")
-        public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
-                Usuario usuario = usuarioService.buscarPorId(id);
+    /*
+    * Busca um usuário específico pelo ID.
+    */
+    @Override
+    public ResponseEntity<UsuarioResponseDTO> buscarPorId(Long id) {
+        Usuario usuario = usuarioService.buscarPorId(id);
 
-        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
+        return ResponseEntity.ok(converterParaResponse(usuario));
+    }
 
-                return ResponseEntity.ok(responseDTO);
-        }
-
-        /*
-        * Endpoint para atualizar os dados de um usuário existente.
-        */
-        @PutMapping("/{id}")
-        public ResponseEntity<UsuarioResponseDTO> atualizar(
-                @PathVariable Long id,
-                @Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO
-        ) {
+    /*
+    * Atualiza os dados de um usuário existente.
+    */
+    @Override
+    public ResponseEntity<UsuarioResponseDTO> atualizar(Long id, UsuarioRequestDTO usuarioRequestDTO) {
         Usuario usuarioAtualizado = new Usuario();
         usuarioAtualizado.setNome(usuarioRequestDTO.getNome());
         usuarioAtualizado.setEmail(usuarioRequestDTO.getEmail());
@@ -129,23 +108,20 @@ public class UsuarioController {
                 usuarioRequestDTO.getPerfilId()
         );
 
-        UsuarioResponseDTO responseDTO = converterParaResponse(usuario);
+        return ResponseEntity.ok(converterParaResponse(usuario));
+    }
 
-        return ResponseEntity.ok(responseDTO);
-        }
+    /*
+    * Exclui um usuário pelo ID.
+    */
+    @Override
+    public ResponseEntity<Void> excluir(Long id) {
+        usuarioService.excluir(id);
 
-        /*
-        * Endpoint para excluir um usuário pelo ID.
-        */
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> excluir(@PathVariable Long id) {
-                usuarioService.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
 
-                return ResponseEntity.noContent().build();
-        }
-       
-
-        private UsuarioResponseDTO converterParaResponse(Usuario usuario) {
+    private UsuarioResponseDTO converterParaResponse(Usuario usuario) {
         UsuarioResponseDTO responseDTO = new UsuarioResponseDTO();
 
         responseDTO.setId(usuario.getId());
@@ -155,11 +131,10 @@ public class UsuarioController {
         responseDTO.setDataCriacao(usuario.getDataCriacao());
 
         if (usuario.getPerfil() != null) {
-                responseDTO.setPerfilId(usuario.getPerfil().getId());
-                responseDTO.setPerfilNome(usuario.getPerfil().getNome());
+            responseDTO.setPerfilId(usuario.getPerfil().getId());
+            responseDTO.setPerfilNome(usuario.getPerfil().getNome());
         }
 
         return responseDTO;
-}
-
+    }
 }
