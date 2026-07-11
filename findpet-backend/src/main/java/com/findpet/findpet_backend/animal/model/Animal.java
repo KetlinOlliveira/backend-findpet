@@ -39,6 +39,7 @@ public class Animal {
     @Column(nullable = false)
     private StatusAnimal status = StatusAnimal.DISPONIVEL;
 
+    @Column(name = "foto_url", columnDefinition = "TEXT")
     private String fotoUrl;
 
     private LocalDateTime dataCadastro = LocalDateTime.now();
