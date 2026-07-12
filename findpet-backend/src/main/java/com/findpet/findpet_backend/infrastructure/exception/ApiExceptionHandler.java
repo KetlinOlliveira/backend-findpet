@@ -11,6 +11,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -20,6 +22,8 @@ import java.util.List;
  */
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     /*
      * Trata exceções de regra de negócio lançadas pelos services.
@@ -133,6 +137,8 @@ public class ApiExceptionHandler {
             Exception exception,
             HttpServletRequest request
     ) {
+        log.error("Erro inesperado em {}", request.getRequestURI(), exception);
+
         ErrorResponseDTO erro = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Erro interno",
