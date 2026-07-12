@@ -82,6 +82,15 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        // Consulta pública: qualquer visitante pode navegar pelos animais
+                        // disponíveis, espécies, raças e buscar CEP sem estar logado.
+                        // Cadastrar/editar/excluir continua exigindo autenticação.
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/animais/**",
+                                "/api/especies/**",
+                                "/api/racas/**",
+                                "/api/ceps/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
