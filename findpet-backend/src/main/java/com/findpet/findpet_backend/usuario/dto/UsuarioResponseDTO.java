@@ -11,6 +11,7 @@ public class UsuarioResponseDTO {
     private String nome;
     private String email;
     private Boolean ativo;
+    private String fotoUrl;
     private LocalDateTime dataCriacao;
     private Long perfilId;
     private String perfilNome;

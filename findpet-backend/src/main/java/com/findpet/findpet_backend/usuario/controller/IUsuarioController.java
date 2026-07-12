@@ -2,6 +2,7 @@ package com.findpet.findpet_backend.usuario.controller;
 
 import com.findpet.findpet_backend.usuario.dto.LoginRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.LoginResponseDTO;
+import com.findpet.findpet_backend.usuario.dto.UsuarioFotoRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,4 +51,11 @@ public interface IUsuarioController {
     @Operation(summary = "Excluir um usuário")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> excluir(@PathVariable Long id);
+
+    @Operation(summary = "Atualizar (ou remover) a foto de perfil do usuário")
+    @PutMapping("/{id}/foto")
+    ResponseEntity<UsuarioResponseDTO> atualizarFoto(
+            @PathVariable Long id,
+            @Valid @RequestBody UsuarioFotoRequestDTO fotoRequestDTO
+    );
 }

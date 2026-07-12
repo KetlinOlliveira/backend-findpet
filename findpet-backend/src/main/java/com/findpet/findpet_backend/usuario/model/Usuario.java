@@ -50,6 +50,9 @@ public class Usuario {
 
     private Boolean ativo = true;
 
+    @Column(name = "foto_url", columnDefinition = "TEXT")
+    private String fotoUrl;
+
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
     @ManyToOne

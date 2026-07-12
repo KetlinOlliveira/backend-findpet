@@ -134,6 +134,20 @@ public class UsuarioService {
 
 
     /*
+    * Atualiza só a foto de perfil do usuário, sem precisar dos outros campos
+    * (nome/email/senha) nem confirmar a senha de novo.
+    */
+    @Transactional
+    public Usuario atualizarFoto(Long id, String fotoUrl) {
+        Usuario usuario = buscarPorId(id);
+
+        usuario.setFotoUrl(fotoUrl);
+
+        return usuarioRepository.save(usuario);
+    }
+
+
+    /*
     * Exclui um usuário pelo ID.
     * Antes de excluir, verifica se o usuário existe.
     */

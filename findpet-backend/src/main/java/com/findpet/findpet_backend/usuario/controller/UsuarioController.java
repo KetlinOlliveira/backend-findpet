@@ -4,6 +4,7 @@ import com.findpet.findpet_backend.infrastructure.security.JwtService;
 import com.findpet.findpet_backend.infrastructure.security.UsuarioAutenticado;
 import com.findpet.findpet_backend.usuario.dto.LoginRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.LoginResponseDTO;
+import com.findpet.findpet_backend.usuario.dto.UsuarioFotoRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioResponseDTO;
 import com.findpet.findpet_backend.infrastructure.mapper.ObjectMapperUtil;
@@ -130,6 +131,16 @@ public class UsuarioController implements IUsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    /*
+    * Atualiza a foto de perfil do usuário.
+    */
+    @Override
+    public ResponseEntity<UsuarioResponseDTO> atualizarFoto(Long id, UsuarioFotoRequestDTO fotoRequestDTO) {
+        Usuario usuario = usuarioService.atualizarFoto(id, fotoRequestDTO.getFotoUrl());
+
+        return ResponseEntity.ok(converterParaResponse(usuario));
+    }
+
     private UsuarioResponseDTO converterParaResponse(Usuario usuario) {
         UsuarioResponseDTO responseDTO = new UsuarioResponseDTO();
 
@@ -137,6 +148,7 @@ public class UsuarioController implements IUsuarioController {
         responseDTO.setNome(usuario.getNome());
         responseDTO.setEmail(usuario.getEmail());
         responseDTO.setAtivo(usuario.getAtivo());
+        responseDTO.setFotoUrl(usuario.getFotoUrl());
         responseDTO.setDataCriacao(usuario.getDataCriacao());
 
         if (usuario.getPerfil() != null) {
