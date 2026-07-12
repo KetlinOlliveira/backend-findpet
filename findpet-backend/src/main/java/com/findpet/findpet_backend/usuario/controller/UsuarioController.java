@@ -1,6 +1,9 @@
 package com.findpet.findpet_backend.usuario.controller;
 
+import com.findpet.findpet_backend.infrastructure.security.JwtService;
+import com.findpet.findpet_backend.infrastructure.security.UsuarioAutenticado;
 import com.findpet.findpet_backend.usuario.dto.LoginRequestDTO;
+import com.findpet.findpet_backend.usuario.dto.LoginResponseDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioResponseDTO;
 import com.findpet.findpet_backend.infrastructure.mapper.ObjectMapperUtil;
@@ -28,13 +31,16 @@ public class UsuarioController implements IUsuarioController {
     */
     private final UsuarioService usuarioService;
     private final ObjectMapperUtil objectMapperUtil;
+    private final JwtService jwtService;
 
     public UsuarioController(
             UsuarioService usuarioService,
-            ObjectMapperUtil objectMapperUtil
+            ObjectMapperUtil objectMapperUtil,
+            JwtService jwtService
     ) {
         this.usuarioService = usuarioService;
         this.objectMapperUtil = objectMapperUtil;
+        this.jwtService = jwtService;
     }
 
     /*
@@ -57,17 +63,20 @@ public class UsuarioController implements IUsuarioController {
     }
 
     /*
-    * Autentica o usuário.
-    * Recebe email e senha e retorna os dados públicos do usuário autenticado.
+    * Autentica o usuário e gera um token JWT.
+    * Recebe email e senha, valida as credenciais via UsuarioService e
+    * devolve o token que o frontend deve reenviar nas próximas requisições.
     */
     @Override
-    public ResponseEntity<UsuarioResponseDTO> login(LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<LoginResponseDTO> login(LoginRequestDTO loginRequestDTO) {
         Usuario usuario = usuarioService.login(
                 loginRequestDTO.getEmail(),
                 loginRequestDTO.getSenha()
         );
 
-        return ResponseEntity.ok(converterParaResponse(usuario));
+        String token = jwtService.gerarToken(new UsuarioAutenticado(usuario));
+
+        return ResponseEntity.ok(new LoginResponseDTO(token, converterParaResponse(usuario)));
     }
 
     /*

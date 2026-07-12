@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,6 +37,44 @@ public class ApiExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    /*
+     * Trata credenciais inválidas no login (email inexistente ou senha errada).
+     * De propósito, não diferencia os dois casos: revelar qual deles falhou
+     * ajudaria um atacante a descobrir quais emails estão cadastrados.
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(
+            BadCredentialsException exception,
+            HttpServletRequest request
+    ) {
+        ErrorResponseDTO erro = new ErrorResponseDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Falha na autenticação",
+                "Email ou senha inválidos.",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+    }
+
+    /*
+     * Trata tentativa de login de um usuário com ativo = false.
+     */
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDisabledException(
+            DisabledException exception,
+            HttpServletRequest request
+    ) {
+        ErrorResponseDTO erro = new ErrorResponseDTO(
+                HttpStatus.FORBIDDEN.value(),
+                "Usuário inativo",
+                "Este usuário está inativo e não pode acessar o sistema.",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(erro);
     }
 
     /*

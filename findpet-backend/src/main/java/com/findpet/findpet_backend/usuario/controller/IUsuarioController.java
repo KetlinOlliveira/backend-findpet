@@ -1,6 +1,7 @@
 package com.findpet.findpet_backend.usuario.controller;
 
 import com.findpet.findpet_backend.usuario.dto.LoginRequestDTO;
+import com.findpet.findpet_backend.usuario.dto.LoginResponseDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioRequestDTO;
 import com.findpet.findpet_backend.usuario.dto.UsuarioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +26,9 @@ public interface IUsuarioController {
     @PostMapping("/cadastro")
     ResponseEntity<UsuarioResponseDTO> cadastrar(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO);
 
-    @Operation(summary = "Autenticar um usuário pelo email e senha")
+    @Operation(summary = "Autenticar um usuário pelo email e senha e obter um token JWT")
     @PostMapping("/login")
-    ResponseEntity<UsuarioResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO);
+    ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO);
 
     @Operation(summary = "Listar usuários cadastrados, de forma paginada")
     @GetMapping
